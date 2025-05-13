@@ -45,11 +45,11 @@ class CASetup:
 
         self.service_instance_ref = service_instance_ref
         self.root_private_key_filename = join(cert_path_prefix, CASetup.ROOT_PRIVATE_KEY_FILENAME)
-        self.root_certificate_filename = join(dirname(__file__), 'cert', CASetup.ROOT_CERTIFICATE_FILENAME)
-        self.ca_private_key_filename = join(dirname(__file__), 'cert', CASetup.CA_PRIVATE_KEY_FILENAME)
-        self.ca_certificate_filename = join(dirname(__file__), 'cert', CASetup.CA_CERTIFICATE_FILENAME)
-        self.si_private_key_filename = join(dirname(__file__), 'cert', CASetup.SI_PRIVATE_KEY_FILENAME)
-        self.si_certificate_filename = join(dirname(__file__), 'cert', CASetup.SI_CERTIFICATE_FILENAME)
+        self.root_certificate_filename = join(cert_path_prefix, CASetup.ROOT_CERTIFICATE_FILENAME)
+        self.ca_private_key_filename = join(cert_path_prefix, CASetup.CA_PRIVATE_KEY_FILENAME)
+        self.ca_certificate_filename = join(cert_path_prefix, CASetup.CA_CERTIFICATE_FILENAME)
+        self.si_private_key_filename = join(cert_path_prefix, CASetup.SI_PRIVATE_KEY_FILENAME)
+        self.si_certificate_filename = join(cert_path_prefix, CASetup.SI_CERTIFICATE_FILENAME)
 
         if not (isfile(self.root_private_key_filename)
                 and isfile(self.root_certificate_filename)
