@@ -436,7 +436,7 @@ async def auth_v1_token(request: Request):
         'origin_ref': origin_ref,
     }
 
-    auth_token = jwt.encode(new_payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm=ALGORITHMS.RS256)
+    auth_token = jwt.encode(new_payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm='RS256')
 
     response = {
         "auth_token": auth_token,

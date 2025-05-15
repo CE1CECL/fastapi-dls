@@ -230,7 +230,7 @@ def test_auth_v1_code():
     response = client.post('/auth/v1/code', json=payload)
     assert response.status_code == 200
 
-    payload = jwt.get_unverified_claims(token=response.json().get('auth_code'))
+    payload = jwt.decode(response.json().get('auth_code'), key=my_si_public_key_as_pem, algorithms=['RS256'])
     assert payload.get('origin_ref') == ORIGIN_REF
 
 
@@ -247,7 +247,7 @@ def test_auth_v1_token():
         "kid": "00000000-0000-0000-0000-000000000000"
     }
     payload = {
-        "auth_code": jwt.encode(payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm=ALGORITHMS.RS256),
+        "auth_code": jwt.encode(payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm='RS256'),
         "code_verifier": SECRET,
     }
 
@@ -255,7 +255,7 @@ def test_auth_v1_token():
     assert response.status_code == 200
 
     token = response.json().get('auth_token')
-    payload = jwt.decode(token=token, key=jwt_decode_key, algorithms=ALGORITHMS.RS256, options={'verify_aud': False})
+    payload = jwt.decode(token, key=jwt_decode_key, algorithms=['RS256'], options={'verify_signature': False})
     assert payload.get('origin_ref') == ORIGIN_REF
 
 
