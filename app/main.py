@@ -15,8 +15,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import Response, RedirectResponse, StreamingResponse
-from jose import jws, jwk, jwt, JWTError
-from jose.constants import ALGORITHMS
+from josepy import jws, jwk, RS256
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.middleware.cors import CORSMiddleware
@@ -63,8 +62,8 @@ my_si_certificate = Cert.from_file(ca_setup.si_certificate_filename)
 my_si_private_key = PrivateKey.from_file(ca_setup.si_private_key_filename)
 my_si_public_key = my_si_private_key.public_key()
 
-jwt_encode_key = jwk.construct(my_si_private_key.pem(), algorithm=ALGORITHMS.RS256)
-jwt_decode_key = jwk.construct(my_si_private_key.public_key().pem(), algorithm=ALGORITHMS.RS256)
+jwt_encode_key = jwk.JWK.load(my_si_private_key.pem())
+jwt_decode_key = jwk.JWK.load(my_si_private_key.public_key().pem())
 
 # Logging
 LOG_LEVEL = logging.DEBUG if DEBUG else logging.INFO
@@ -114,7 +113,11 @@ app.add_middleware(
 def __get_token(request: Request) -> dict:
     authorization_header = request.headers.get('authorization')
     token = authorization_header.split(' ')[1]
-    return jwt.decode(token=token, key=jwt_decode_key, algorithms=ALGORITHMS.RS256, options={'verify_aud': False})
+
+    # return jwt.decode(token=token, key=jwt_decode_key, algorithms=ALGORITHMS.RS256, options={'verify_aud': False})
+    _ = jws.Signature()
+    _.verify(payload=token.encode('utf-8'), key=jwt_decode_key)
+    return _.to_partial_json()
 
 
 # Endpoints
@@ -295,9 +298,12 @@ async def _client_token():
         },
     }
 
-    content = jws.sign(payload, key=jwt_encode_key, headers=None, algorithm=ALGORITHMS.RS256)
+    # content = jws.sign(payload, key=jwt_encode_key, headers=None, algorithm=ALGORITHMS.RS256)
+    payload = json_dumps(payload).encode('utf-8')
+    content = jws.Signature.sign(payload=payload, key=jwt_encode_key, alg=RS256, include_jwk=False)
 
-    response = StreamingResponse(iter([content]), media_type="text/plain")
+    # response = StreamingResponse(iter([content]), media_type="text/plain")
+    response = StreamingResponse(iter(content), media_type="text/plain")
     filename = f'client_configuration_token_{datetime.now().strftime("%d-%m-%y-%H-%M-%S")}.tok'
     response.headers["Content-Disposition"] = f'attachment; filename={filename}'
 
@@ -386,7 +392,9 @@ async def auth_v1_code(request: Request):
         'kid': SITE_KEY_XID
     }
 
-    auth_code = jws.sign(payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm=ALGORITHMS.RS256)
+    # auth_code = jws.sign(payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm=ALGORITHMS.RS256)
+    payload = json_dumps(payload).encode('utf-8')
+    auth_code = jws.Signature.sign(payload=payload, key=jwt_encode_key, alg=RS256, include_jwk=True)
 
     response = {
         "auth_code": auth_code,
