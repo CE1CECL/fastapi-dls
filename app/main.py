@@ -410,7 +410,7 @@ async def auth_v1_token(request: Request):
     try:
         #payload = jwt.decode(token=j.get('auth_code'), key=jwt_decode_key, algorithms=ALGORITHMS.RS256)
         payload = jwt.decode(jwt=j.get('auth_code'), key=jwt_decode_key, algorithms=['RS256'])
-    except JWTError as e:
+    except jwt.PyJWTError as e:
         response = {'status': 400, 'title': 'invalid token', 'detail': str(e)}
         return Response(content=json_dumps(response), media_type='application/json', status_code=400)
 
@@ -436,7 +436,7 @@ async def auth_v1_token(request: Request):
         'origin_ref': origin_ref,
     }
 
-    auth_token = jwt.encode(new_payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm='RS256')
+    auth_token = jwt.encode(payload=new_payload, key=jwt_encode_key, headers={'kid': payload.get('kid')}, algorithm='RS256')
 
     response = {
         "auth_token": auth_token,
@@ -477,7 +477,7 @@ async def leasing_v1_config_token(request: Request):
 
     # my_jwt_encode_key = jwk.construct(my_si_private_key.pem().decode('utf-8'), algorithm=ALGORITHMS.RS256)
     # config_token = jws.sign(payload, key=my_jwt_encode_key, headers=None, algorithm=ALGORITHMS.RS256)
-    config_token = jwt.encode(payload=payload, key=my_si_private_key.pem(), headers=None, algorithm='RS256')
+    config_token = jwt.encode(payload=payload, key=jwt_encode_key, headers=None, algorithm='RS256')
 
     response_ca_chain = my_ca_certificate.pem().decode('utf-8').strip()
 
@@ -708,7 +708,7 @@ async def leasing_v1_lessor_shutdown(request: Request):
     j, cur_time = json_loads((await request.body()).decode('utf-8')), datetime.now(UTC)
 
     token = j.get('token')
-    token = jwt.decode(token=token, key=jwt_decode_key, algorithms=ALGORITHMS.RS256, options={'verify_aud': False})
+    token = jwt.decode(jwt=token, key=jwt_decode_key, algorithms='RS256', options={'verify_aud': False})
     origin_ref = token.get('origin_ref')
 
     released_lease_list = list(map(lambda x: x.lease_ref, Lease.find_by_origin_ref(db, origin_ref)))
