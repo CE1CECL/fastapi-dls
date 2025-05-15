@@ -1,7 +1,7 @@
 # https://packages.ubuntu.com
 fastapi==0.110.3
 uvicorn[standard]==0.30.3
-josepy==2.0.0
+pyjwt==2.10.1
 cryptography==42.0.5
 python-dateutil==2.9.0
 sqlalchemy==2.0.32

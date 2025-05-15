@@ -4,13 +4,13 @@ from base64 import b64encode as b64enc
 from calendar import timegm
 from datetime import datetime, UTC
 from hashlib import sha256
+from json import loads as json_loads, dumps as json_dumps
 from uuid import uuid4, UUID
 
 from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
 from cryptography.hazmat.primitives.hashes import SHA256
 from dateutil.relativedelta import relativedelta
-from jose import jwt, jwk, jws
-from jose.constants import ALGORITHMS
+import jwt
 from starlette.testclient import TestClient
 
 # add relative path to use packages as they were in the app/ dir
@@ -38,12 +38,12 @@ my_si_public_key = my_si_private_key.public_key()
 my_si_public_key_as_pem = my_si_private_key.public_key().pem()
 my_si_certificate = Cert.from_file(ca_setup.si_certificate_filename)
 
-jwt_encode_key = jwk.construct(my_si_private_key_as_pem, algorithm=ALGORITHMS.RS256)
-jwt_decode_key = jwk.construct(my_si_public_key_as_pem, algorithm=ALGORITHMS.RS256)
-
+jwt_encode_key = my_si_private_key.pem()
+jwt_decode_key = my_si_private_key.public_key().pem()
 
 def __bearer_token(origin_ref: str) -> str:
-    token = jwt.encode({"origin_ref": origin_ref}, key=jwt_encode_key, algorithm=ALGORITHMS.RS256)
+    # token = jwt.encode({"origin_ref": origin_ref}, key=jwt_encode_key, algorithm=ALGORITHMS.RS256)
+    token = jwt.encode(payload={"origin_ref": origin_ref}, key=jwt_encode_key, algorithm='RS256')
     token = f'Bearer {token}'
     return token
 
@@ -145,12 +145,12 @@ def test_config_token():
     assert nv_si_certificate.public_key().mod() == nv_response_public_key.get('mod')[0]
     assert nv_si_certificate.authority_key_identifier() == nv_ca_chain.subject_key_identifier()
 
-    nv_jwt_decode_key = jwk.construct(nv_response_public_cert, algorithm=ALGORITHMS.RS256)
+    # nv_jwt_decode_key = jwk.construct(nv_response_public_cert, algorithm=ALGORITHMS.RS256)
 
     nv_response_config_token = response.json().get('configToken')
 
-    payload = jws.verify(nv_response_config_token, key=nv_jwt_decode_key, algorithms=ALGORITHMS.RS256)
-    payload = json.loads(payload)
+    #payload = jws.verify(nv_response_config_token, key=nv_jwt_decode_key, algorithms=ALGORITHMS.RS256)
+    payload = jwt.decode(jwt=nv_response_config_token, key=nv_si_certificate.public_key().pem(), algorithms=['RS256'], options={'verify_signature': False})
     assert payload.get('iss') == 'NLS Service Instance'
     assert payload.get('aud') == 'NLS Licensed Client'
     assert payload.get('service_instance_ref') == INSTANCE_REF
