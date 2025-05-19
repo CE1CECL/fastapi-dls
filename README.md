@@ -416,6 +416,140 @@ acme.sh --issue -d example.com \
 
 After first success you have to replace `--issue` with `--renew`.
 
+# Nginx Reverse Proxy (experimental)
+
+- This guide is written for Debian/Ubuntu systems, other may work, but you have to do your setup on your own
+- Uvicorn does no longer serve requests directly
+- NGINX is used as HTTP & HTTPS entrypoint
+- Assumes you already have set up webserver certificate and private-key
+
+**Install Nginx Webserver**
+
+```shell
+apt-get install nginx-light
+```
+
+**Remove default vhost**
+
+```shell
+rm /etc/nginx/sites-enabled/default
+```
+
+**Create fastapi-dls vhost**
+
+<details>
+    <summary>`/etc/nginx/sites-available/fastapi-dls`</summary>
+
+```
+upstream dls-backend {
+        server 127.0.0.1:8000;  # must match dls listen port
+}
+
+server {
+        listen 443 ssl http2 default_server;
+        listen [::]:443 ssl http2 default_server;
+
+        root /var/www/html;
+        index index.html;
+        server_name _;
+
+        ssl_certificate "/etc/fastapi-dls/cert/webserver.crt";
+        ssl_certificate_key "/etc/fastapi-dls/cert/webserver.key";
+        ssl_session_cache shared:SSL:1m;
+        ssl_session_timeout 10m;
+        ssl_protocols TLSv1.3 TLSv1.2;
+        # ssl_ciphers "ECDHE-ECDSA-CHACHA20-POLY1305";
+        # ssl_ciphers PROFILE=SYSTEM;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+                # https://www.uvicorn.org/deployment/
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $connection_upgrade;
+                proxy_redirect off;
+                proxy_buffering off;
+
+                proxy_set_header X-Real-IP $remote_addr;
+
+                proxy_pass http://dls-backend$request_uri;
+        }
+
+        location = /-/health {
+                access_log off;
+                add_header 'Content-Type' 'application/json';
+                return 200 '{\"status\":\"up\",\"service\":\"nginx\"}';
+        }
+}
+
+map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+}
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/html;
+        index index.html;
+        server_name _;
+
+        location /leasing/v1/lessor/shutdown {
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_pass http://dls-backend/leasing/v1/lessor/shutdown;
+        }
+
+        location / {
+                return 301 https://$host$request_uri;
+        }
+}
+```
+</details>
+
+**Enable and test vhost**
+
+```shell
+ln -s /etc/nginx/sites-available/fastapi-dls /etc/nginx/sites-enabled/fastapi-dls
+
+nginx -t
+# nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+# nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+**Override default fastapi-dls systemd service**
+
+```shell
+mkdir /etc/systemd/system/fastapi-dls.service.d
+```
+
+<details>
+    <summary>`/etc/systemd/system/fastapi-dls.service.d/override.conf`</summary>
+
+```
+[Service]
+ExecStart=
+ExecStart=uvicorn main:app \
+  --env-file /etc/fastapi-dls/env \
+  --host 127.0.0.1 --port 8000 \
+  --app-dir /usr/share/fastapi-dls/app \
+  --proxy-headers
+```
+</details>
+
+**Run**
+
+```shell
+systemctl daemon-reload
+service nginx start
+service fastapi-dls start
+```
+
 # Configuration
 
 | Variable               | Default                                | Usage                                                                                                |
