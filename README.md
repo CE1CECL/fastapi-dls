@@ -416,7 +416,7 @@ acme.sh --issue -d example.com \
 
 After first success you have to replace `--issue` with `--renew`.
 
-# Nginx Reverse Proxy (experimental)
+## Nginx Reverse Proxy (experimental)
 
 - This guide is written for Debian/Ubuntu systems, other may work, but you have to do your setup on your own
 - Uvicorn does no longer serve requests directly
