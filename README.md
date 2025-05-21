@@ -549,7 +549,7 @@ service nginx start
 service fastapi-dls start
 ```
 
-# Configuration
+# Configuration (Service)
 
 | Variable               | Default                                | Usage                                                                                                |
 |------------------------|----------------------------------------|------------------------------------------------------------------------------------------------------|
