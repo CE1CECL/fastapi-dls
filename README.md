@@ -18,7 +18,6 @@ Only the clients need a connection to this service on configured port.
 **Official Links**
 
 * https://git.collinwebdesigns.de/oscar.krause/fastapi-dls (Private Git)
-* https://gitea.publichub.eu/oscar.krause/fastapi-dls (Public Git)
 * https://hub.docker.com/r/collinwebdesigns/fastapi-dls (Docker-Hub `collinwebdesigns/fastapi-dls:latest`)
 
 *All other repositories are forks! (which  is no bad - just for information and bug reports)*
