@@ -5,7 +5,7 @@ Minimal Delegated License Service (DLS).
 > [!warning] Branch support
 > FastAPI-DLS Version 1.x supports up to **`17.x`** releases. \
 > FastAPI-DLS Version 2.x is backwards compatible to `17.x` and supports **`18.x`** releases in combination
-> with [gridd-unlock-patcher](https://git.collinwebdesigns.de/oscar.krause/gridd-unlock-patcher).
+> with [gridd-unlock-patcher](https://git.collinwebdesigns.de/vgpu/gridd-unlock-patcher).
 > Other combinations of FastAPI-DLS and Driver-Branches may work but are not tested.
 
 > [!note] Compatibility
@@ -924,6 +924,6 @@ Special thanks to:
 - `Krutav Shah` who wrote the [vGPU_Unlock Wiki](https://docs.google.com/document/d/1pzrWJ9h-zANCtyqRgS7Vzla0Y8Ea2-5z2HEi4X75d2Q/)
 - `Wim van 't Hoog` for the [Proxmox All-In-One Installer Script](https://wvthoog.nl/proxmox-vgpu-v3/)
 - `mrzenc` who wrote [fastapi-dls-nixos](https://github.com/mrzenc/fastapi-dls-nixos)
-- `electricsheep49` who wrote [gridd-unlock-patcher](https://git.collinwebdesigns.de/oscar.krause/gridd-unlock-patcher)
+- `electricsheep49` who wrote [gridd-unlock-patcher](https://git.collinwebdesigns.de/vgpu/gridd-unlock-patcher)
 
 And thanks to all people who contributed to all these libraries!
