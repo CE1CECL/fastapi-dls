@@ -883,9 +883,7 @@ The error message can safely be ignored (since we have no license limitation :P)
 # vGPU Software Compatibility Matrix
 
 <details>
-  <summary>Show Table</summary>
-
-Successfully tested with this package versions.
+  <summary>Successfully tested with this package versions: Show Table</summary>
 
 | FastAPI-DLS Version | vGPU Suftware | Driver Branch | Linux vGPU Manager | Linux Driver | Windows Driver |  Release Date |      EOL Date |
 |---------------------|:-------------:|:-------------:|--------------------|--------------|----------------|--------------:|--------------:|
