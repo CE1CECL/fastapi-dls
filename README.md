@@ -9,8 +9,8 @@ Minimal Delegated License Service (DLS).
 > Other combinations of FastAPI-DLS and Driver-Branches may work but are not tested.
 
 > [!note] Compatibility
-> Compatibility tested with official NLS 2.0.1, 2.1.0, 3.1.0, 3.3.1, 3.4.0. For Driver compatibility
-> see [compatibility matrix](#vgpu-software-compatibility-matrix).
+> Compatibility tested with official NLS 2.0.1, 2.1.0, 3.1.0, 3.3.1, 3.4.0. **For Driver compatibility
+> see [compatibility matrix](#vgpu-software-compatibility-matrix)**.
 
 This service can be used without internet connection.
 Only the clients need a connection to this service on configured port.
