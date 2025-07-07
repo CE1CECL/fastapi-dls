@@ -14,12 +14,13 @@ from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.requests import Request
-from fastapi.responses import Response, RedirectResponse, StreamingResponse, StaticFiles
+from fastapi.responses import Response, RedirectResponse, StreamingResponse
 from jose import jws, jwk, jwt, JWTError
 from jose.constants import ALGORITHMS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 
 from orm import Origin, Lease, init as db_init, migrate
 from util import CASetup, PrivateKey, Cert, ProductMapping, load_file
