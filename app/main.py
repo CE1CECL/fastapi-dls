@@ -5,8 +5,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, UTC
 from hashlib import sha256
 from json import loads as json_loads, dumps as json_dumps
-from os import getenv as env
-from os.path import join, dirname
+from os import getenv as env, listdir
+from os.path import join, dirname, isfile, isdir, exists
 from textwrap import wrap
 from uuid import uuid4
 
@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.requests import Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import Response, RedirectResponse, StreamingResponse
 import jwt
 from sqlalchemy import create_engine
@@ -49,6 +50,7 @@ LEASE_RENEWAL_PERIOD = float(env('LEASE_RENEWAL_PERIOD', 0.15))
 LEASE_RENEWAL_DELTA = timedelta(days=int(env('LEASE_EXPIRE_DAYS', 90)), hours=int(env('LEASE_EXPIRE_HOURS', 0)))
 CLIENT_TOKEN_EXPIRE_DELTA = relativedelta(years=12)
 CORS_ORIGINS = str(env('CORS_ORIGINS', '')).split(',') if (env('CORS_ORIGINS')) else [f'https://{DLS_URL}']
+DRIVERS_DIR = env('DRIVERS_DIR', None)
 DT_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 PRODUCT_MAPPING = ProductMapping(filename=join(dirname(__file__), 'static/product_mapping.json'))
 
@@ -98,6 +100,9 @@ async def lifespan(_: FastAPI):
 
 config = dict(openapi_url=None, docs_url=None, redoc_url=None)  # dict(openapi_url='/-/openapi.json', docs_url='/-/docs', redoc_url='/-/redoc')
 app = FastAPI(title='FastAPI-DLS', description='Minimal Delegated License Service (DLS).', version=VERSION, lifespan=lifespan, **config)
+
+if DRIVERS_DIR is not None:
+    app.mount('/-/static-drivers', StaticFiles(directory=str(DRIVERS_DIR), html=False), name='drivers')
 
 app.debug = DEBUG
 app.add_middleware(
@@ -205,6 +210,25 @@ async def _manage(request: Request):
     </html>
     '''
     return Response(response, media_type='text/html', status_code=200)
+
+
+@app.get('/-/drivers/{directory:path}', summary='* List drivers directory')
+async def _drivers(request: Request, directory: str | None):
+    if DRIVERS_DIR is None:
+        return Response(status_code=404, content=f'Variable "DRIVERS_DIR" not set.')
+
+    path = join(DRIVERS_DIR, directory)
+
+    if not exists(path) and not isfile(path):
+        return Response(status_code=404, content=f'Resource "{path}" not found!')
+
+    content = [{
+        "type": "file" if isfile(f'{path}/{_}') else "folder" if isdir(f'{path}/{_}') else "unknown",
+        "name": _,
+        "link": f'/-/static-drivers/{directory}{_}',
+    } for _ in listdir(path)]
+
+    return Response(content=json_dumps({"directory": path, "content": content}), media_type='application/json', status_code=200)
 
 
 @app.get('/-/origins', summary='* Origins')
