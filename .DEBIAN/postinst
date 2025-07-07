@@ -3,13 +3,7 @@
 WORKING_DIR=/usr/share/fastapi-dls
 CONFIG_DIR=/etc/fastapi-dls
 
-if [ ! -f $CONFIG_DIR/instance.private.pem ]; then
-  echo "> Create dls-instance keypair ..."
-  openssl genrsa -out $CONFIG_DIR/instance.private.pem 2048
-  openssl rsa -in $CONFIG_DIR/instance.private.pem -outform PEM -pubout -out $CONFIG_DIR/instance.public.pem
-else
-  echo "> Create dls-instance keypair skipped! (exists)"
-fi
+source $CONFIG_DIR/env
 
 while true; do
   [ -f $CONFIG_DIR/webserver.key ] && default_answer="N" || default_answer="Y"
@@ -33,15 +27,20 @@ if [ -f $CONFIG_DIR/webserver.key ]; then
 
   if [ -x "$(command -v curl)" ]; then
     echo "> Testing API ..."
-    source $CONFIG_DIR/env
     curl --insecure -X GET https://$DLS_URL:$DLS_PORT/-/health
   else
     echo "> Testing API failed, curl not available. Please test manually!"
   fi
 fi
 
+echo "> Create Certificate-Chain folder ..."
+mkdir -p $CERT_PATH
+
+echo "> Set permissions ..."
 chown -R www-data:www-data $CONFIG_DIR
 chown -R www-data:www-data $WORKING_DIR
+
+echo "> Done."
 
 cat <<EOF
 
@@ -49,11 +48,11 @@ cat <<EOF
 #                                                                             #
 #    fastapi-dls is now installed.                                            #
 #                                                                             #
-#    Service should be up and running.                                        #
-#      Webservice is listen to https://localhost                              #
+#    Service should be up and running (if you choose to auto-generate         #
+#     self-signed webserver certificate).                                     #
 #                                                                             #
-#    Configuration is stored in /etc/fastapi-dls/env.                         #
-#                                                                             #
+#    - Webservice is listen to https://localhost                              #                                                                       #
+#    - Configuration is stored in /etc/fastapi-dls/env                        #
 #                                                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

@@ -2,6 +2,17 @@
 
 I am planning to implement the following features in the future.
 
+## Patching Endpoint
+
+A (optional) Path-Variable to `gridd-unlock-patcher` which enables an additional endpoint.
+Here you can upload your `nvidia-gridd` binary or `nvxdapix.dll` which then will be patched and responded.
+
+## All-In-One Installer Script Endpoint
+
+A new all-in-one installer endpoint
+(here a script is returned for linux or windows which then could be called like
+curl https://<fastapi-dls>/-/install/deb | sh which then
+download and place a client-token in the right directory, patch your girdd / dll and restart nvidia-gridd service)
 
 ## HA - High Availability
 
