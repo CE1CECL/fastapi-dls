@@ -1,0 +1,11 @@
+# https://packages.debian.org/hu/
+fastapi==0.115.11
+uvicorn[standard]==0.32.0
+pyjwt==2.10.1
+cryptography==43.0.0
+python-dateutil==2.9.0
+sqlalchemy==2.0.40
+markdown==3.7
+python-dotenv==1.0.1
+jinja2==3.1.6
+httpx==0.28.1

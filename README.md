@@ -328,6 +328,7 @@ Packages are available here:
 
 Successful tested with (**LTS Version**):
 
+- **Debian 13 (Trixie)** (EOL: June 30, 2028)
 - **Debian 12 (Bookworm)** (EOL: June 06, 2026)
 - *Ubuntu 22.10 (Kinetic Kudu)* (EOL: July 20, 2023)
 - *Ubuntu 23.04 (Lunar Lobster)* (EOL: January 2024)
