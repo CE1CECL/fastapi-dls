@@ -4,7 +4,7 @@ Minimal Delegated License Service (DLS).
 
 > [!warning] Branch support
 > FastAPI-DLS Version 1.x supports up to **`17.x`** releases. \
-> FastAPI-DLS Version 2.x is backwards compatible to `17.x` and supports **`18.x`** releases in combination
+> FastAPI-DLS Version 2.x is backwards compatible to `17.x` and supports **`18.x`**, **`19.x`**, releases in combination
 > with [gridd-unlock-patcher](https://git.collinwebdesigns.de/vgpu/gridd-unlock-patcher).
 > Other combinations of FastAPI-DLS and Driver-Branches may work but are not tested.
 
@@ -670,7 +670,8 @@ Shows current runtime environment variables and their values.
 
 **`GET /-/config/root-certificate`**
 
-Returns the Root-Certificate Certificate which is used. This is required for patching `nvidia-gridd` on 18.x releases.
+Returns the Root-Certificate Certificate which is used.
+This is required for patching `nvidia-gridd` on `18.x`, `19.x` releases.
 
 **`GET /-/readme`**
 
@@ -885,7 +886,9 @@ The error message can safely be ignored (since we have no license limitation :P)
 
 | FastAPI-DLS Version | vGPU Suftware | Driver Branch | Linux vGPU Manager | Linux Driver | Windows Driver |  Release Date |      EOL Date |
 |---------------------|:-------------:|:-------------:|--------------------|--------------|----------------|--------------:|--------------:|
-| `2.x`               |    `18.3`     |   **R570**    | `570.158.02`       | `570.158.01` | `573.36`       |     June 2025 |    March 2026 |
+| `2.x`               |    `19.0`     |   **R580**    | `580.65.05`        | `580.65.06`  | `580.88`       |   August 2025 |     July 2028 |
+| `2.x`               |    `18.4`     |   **R570**    | `570.172.07`       | `570.172.08` | `573.48`       |     July 2025 |    March 2026 |
+|                     |    `18.3`     |   **R570**    | `570.158.02`       | `570.158.01` | `573.36`       |     June 2025 |               |
 |                     |    `18.2`     |   **R570**    | `570.148.06`       | `570.148.08` | `573.07`       |      May 2025 |               |
 |                     |    `18.1`     |   **R570**    | `570.133.08`       | `570.133.07` | `572.83`       |    April 2025 |               |
 |                     |    `18.0`     |   **R570**    | `570.124.03`       | `570.124.06` | `572.60`       |    March 2025 |               |
@@ -896,7 +899,7 @@ The error message can safely be ignored (since we have no license limitation :P)
 |                     |    `17.2`     |               | `550.90.05`        | `550.90.07`  | `552.55`       |     June 2024 |               |
 |                     |    `17.1`     |               | `550.54.16`        | `550.54.15`  | `551.78`       |    March 2024 |               |
 |                     |    `17.0`     |   **R550**    | `550.54.10`        | `550.54.14`  | `551.61`       | February 2024 |               |
-| `1.x`               |    `16.10`    |   **R535**    | `535.247.02`       | `535.247.01` | `539.28`       |    April 2025 |     July 2026 |
+| `1.x`               |    `16.11`    |   **R535**    | `535.261.04`       | `535.261.03` | `539.41`       |     July 2025 |     July 2026 |
 | `1.x`               |    `15.4`     |   **R525**    | `525.147.01`       | `525.147.05` | `529.19`       |     June 2023 | December 2023 |
 | `1.x`               |    `14.4`     |   **R510**    | `510.108.03`       | `510.108.03` | `514.08`       | December 2022 | February 2023 |
 
