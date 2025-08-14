@@ -250,7 +250,7 @@ semgrep-sast:
 
 test_coverage:
 #  extends: test
-  image: python:3.12-slim-bookworm
+  image: python:3.13-slim-trixie
   allow_failure: true
   stage: test
   rules:
