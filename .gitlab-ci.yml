@@ -172,12 +172,12 @@ test:apt:
   parallel:
     matrix:
       - IMAGE:
-          # - debian:trixie-slim # EOL: t.b.a.; "python3-jose" not available, but "python3-josepy"
+          - debian:trixie-slim # EOL: t.b.a.; "python3-jose" not available, but "python3-josepy" or "python3-jwt"
           - debian:bookworm-slim # EOL: June 06, 2026
-          - debian:bookworm-slim # EOL: June 06, 2026
-          - ubuntu:24.04 # EOL: April 2036
-          # - ubuntu:24.10 # EOL: t.b.a.; "python3-jose" not available, but "python3-josepy"
-          # - ubuntu:25.04 # EOL: t.b.a.; "python3-jose" not available, but "python3-josepy"
+          - debian:bullseye-slim # EOL: June 06, 2026
+          - ubuntu:24.04 # EOL: April 2036 (Noble Numbat)
+          - ubuntu:25.04 # EOL: January 2026 (Plucky Puffin); "python3-jose" not available, but "python3-josepy" or "python3-jwt"
+          - ubuntu:25.10 # EOL: July 2026 (Questing Quokka);
   needs:
     - job: build:apt
       artifacts: true
@@ -250,7 +250,7 @@ semgrep-sast:
 
 test_coverage:
 #  extends: test
-  image: python:3.12-slim-bookworm
+  image: python:3.13-slim-trixie
   allow_failure: true
   stage: test
   rules:
